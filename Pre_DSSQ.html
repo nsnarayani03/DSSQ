@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/@jspsych/plugin-survey@0.2.2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@jspsych/plugin-survey@0.2.1/css/survey.css">
+
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey@0.2.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>P
+
+
+  </head>
+  <body></body>
+  <script>
+
+	 const convertToCsv = (arr) => {
+          const keys = Object.keys(arr[0]);
+          const replacer = (_key, value) => value === null ? '' : value;
+          const processRow = row => keys.map(key => JSON.stringify(row[key], replacer)).join(',');
+          return [keys.join(','), ...arr.map(processRow)].join('\r\n');
+      };
+
+      const downloadFile = (fileName, data) => {
+          var link = document.createElement('a');
+          link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+          link.setAttribute('download', fileName);
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      };
+
+
+
+/* initialize jsPsych */
+    var jsPsych = initJsPsych({
+  on_finish: function() {
+    //jsPsych.data.displayData();
+    // first argument is the format, second is the filename.
+    // the format can be either 'csv' or 'json'.
+            a = jsPsych.data.get()
+            Q0_resp = a.trials[0].response
+            Q1_resp = a.trials[1].response.P0_Q0
+            Q2_resp = a.trials[2].response.P0_Q0
+	    Q3_resp = a.trials[3].response.P0_Q0
+	    Q4_resp = a.trials[4].response.P0_Q0
+		
+
+            all_data = Object.assign({}, Q0_resp, Q1_resp, Q2_resp, Q3_resp, Q4_resp);
+            //jsPsych.data.get().localSave('csv', 'mydata.csv');
+            b = convertToCsv([all_data])
+            downloadFile("preDSSQ.csv", b)
+  }
+});
+
+
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+  
+var intro = {
+          type: jsPsychSurveyText,
+          questions: [
+              { prompt: 'Participant id', name: 'PID' },
+              { prompt: 'Age', name: 'AGE' },
+              { prompt: 'Gender', name: 'GND' }
+          ]
+      }
+
+    var mood = {
+        type: jsPsychSurvey,
+        pages: [
+            [
+                {
+                    type: 'likert-table',
+                    prompt: "For each word, choose option which best describes your mood AT THE MOMENT.",
+		    required: true,
+                    statements: [
+                        { prompt: 'Happy', name: 'Happy' },
+                        { prompt: 'Dissatisfied', name: 'Dissatisfied' },
+                        { prompt: 'Energetic', name: 'Energetic' },
+			{ prompt: 'Relaxed', name: 'Relaxed' },
+			{ prompt: 'Alert', name: 'Alert' },
+			{ prompt: 'Nervous', name: 'Nervous' },
+			{ prompt: 'Passive', name: 'Passive' },
+			{ prompt: 'Cheerful', name: 'Cheerful' },
+			{ prompt: 'Tense', name: 'Tense' },
+			{ prompt: 'Jittery', name: 'Jittery' },
+			{ prompt: 'Sluggish', name: 'Sluggish' },
+			{ prompt: 'Sorry', name: 'Sorry' },
+			{ prompt: 'Composed', name: 'Composed' },
+			{ prompt: 'Depressed', name: 'Depressed' },
+			{ prompt: 'Restful', name: 'Restful' },
+			{ prompt: 'Vigorous', name: 'Vigorous' },
+			{ prompt: 'Anxious', name: 'Anxious' },
+			{ prompt: 'Satisfied', name: 'Satisfied' },
+			{ prompt: 'Unenterprising', name: 'Unenterprising' },
+			{ prompt: 'Sad', name: 'Sad' },
+			{ prompt: 'Calm', name: 'Calm' },
+			{ prompt: 'Active', name: 'Active' },
+			{ prompt: 'Contented', name: 'Contented' },
+			{ prompt: 'Tired', name: 'Tired' },
+			{ prompt: 'Impatient', name: 'Impatient' },
+			{ prompt: 'Annoyed', name: 'Annoyed' },
+			{ prompt: 'Angry', name: 'Angry' },
+			{ prompt: 'Irritated', name: 'Irritated' },
+			{ prompt: 'Grouchy', name: 'Grouchy' },
+
+                    ],
+                    options: ['Definitely', 'Slightly', 'Slightly Not', 'Definitely Not'],
+                },
+            ]
+        ]
+    };
+
+    var motivation = {
+        type: jsPsychSurvey,
+        pages: [
+            [
+                {
+                    type: 'likert-table',
+                    prompt: "Please answer some questions about your attitude to the task you are about to do. Rate your agreement with the following statements by circling one of the following answers:    ",
+		    required: true,
+                    statements: [
+                        { prompt: 'I expect the content of the task will be interesting', name: 'moti_1' },
+                        { prompt: 'The only reason to do the task is to get an external reward (e.g. payment)', name: 'moti_2' },
+                        { prompt: 'I would rather spend the time doing the task on something else', name: 'moti_3' },
+			{ prompt: 'I am concerned about not doing as well as I can', name: 'moti_4' },
+			{ prompt: 'I want to perform better than most people do', name: 'moti_5' },
+			{ prompt: 'I will become fed up with the task', name: 'moti_6' },
+			{ prompt: 'I am eager to do well', name: 'moti_7' },
+			{ prompt: 'I would be disappointed if I failed to do well on the task', name: 'moti_8' },
+			{ prompt: 'I am committed to attaining my performance goals', name: 'moti_9' },
+			{ prompt: 'Doing the task is worthwhile', name: 'moti_10' },
+			{ prompt: 'I expect to find the task boring', name: 'moti_11' },
+			{ prompt: 'I feel apathetic about my performance', name: 'moti_12' },
+			{ prompt: 'I want to succeed on the task', name: 'moti_13' },
+			{ prompt: 'The task will bring out my competitive drives', name: 'moti_14' },
+			{ prompt: 'I am motivated to do the tasks', name: 'moti_15' },
+
+
+                    ],
+                    options: ['Not at all', 'A little bit', 'Somewhat', 'Very much', 'Extremely'],
+                },
+            ]
+        ]
+    };
+
+var thinking_style = {
+        type: jsPsychSurvey,
+        pages: [
+            [
+                {
+                    type: 'likert-table',
+                    prompt: "To answer, circle one of the following answers: ",
+		    required: true,
+                    statements: [
+                        { prompt: 'I am trying to figure myself out.', name: 'thst_1' },
+			{ prompt: 'I am very aware of myself.', name: 'thst_2' },
+			{ prompt: 'I am reflecting about myself.', name: 'thst_3' },
+			{ prompt: 'I am daydreaming about myself.', name: 'thst_4' },
+			{ prompt: 'I am thinking deeply about myself.', name: 'thst_5' },
+			{ prompt: 'I am attending to my inner feelings.', name: 'thst_6' },
+			{ prompt: 'I am examining my motives.', name: 'thst_7' },
+			{ prompt: 'I feel that I am off somewhere watching myself.', name: 'thst_8' },
+			{ prompt: 'I feel confident about my abilities.', name: 'thst_9' },
+			{ prompt: 'I am worried about whether I am regarded as a success or failure.', name: 'thst_10' },
+			{ prompt: 'I feel self-conscious.', name: 'thst_11' },
+			{ prompt: 'I feel as smart as others.', name: 'thst_12' },
+			{ prompt: 'I am worried about what other people think of me.', name: 'thst_13' },
+			{ prompt: 'I feel confident that I understand things.', name: 'thst_14' },
+			{ prompt: 'I feel inferior to others at this moment.', name: 'thst_15' },
+			{ prompt: 'I feel concerned about the impression I am making.', name: 'thst_16' },
+			{ prompt: 'I feel that I have less scholastic ability right now than others.', name: 'thst_17' },
+			{ prompt: 'I am worried about looking foolish', name: 'thst_18' },
+			{ prompt: 'My attention is directed towards things other than the task.', name: 'thst_19' },
+			{ prompt: 'I am finding physical sensations such as muscular tension distracting.', name: 'thst_20' },
+                        { prompt: 'I expect my performance will be impaired by thoughts irrelevant to the task.', name: 'thst_21' },
+			{ prompt: 'I have too much to think about to be able to concentrate on the task.', name: 'thst_22' },
+			{ prompt: 'My thinking is generally clear and sharp.', name: 'thst_23' },
+			{ prompt: 'I will find it hard to maintain my concentration for more than a short time.', name: 'thst_24' },
+			{ prompt: 'My mind is wandering a great deal.', name: 'thst_25' },
+			{ prompt: 'My thoughts are confused and difficult to control.', name: 'thst_26' },
+			{ prompt: 'I expect to perform proficiently on this task.', name: 'thst_27' },
+			{ prompt: 'Generally, I feel in control of things.', name: 'thst_28' },
+			{ prompt: 'I can handle any difficulties I encounter.', name: 'thst_29' },
+			{ prompt: 'I consider myself skillful at the task.', name: 'thst_30' },
+                        
+
+                    ],
+                    options: ['Not at all', 'A little bit', 'Somewhat', 'Very much', 'Extremely'],
+                },
+            ]
+        ]
+    };
+
+var thinking_content = {
+        type: jsPsychSurvey,
+        pages: [
+            [
+                {
+                    type: 'likert-table',
+                    prompt: "This set of questions concerns the kinds of thoughts that go through people's heads at particular times, for example while they are doing some task or activity. Below is a list of thoughts, some of which you might have had recently.  Please indicate roughly how often you had each thought DURING THE LAST TEN MINUTES or so, by circling a number from the list below.",
+		    required: true,
+                    statements: [
+                        { prompt: 'I thought about how I should work more carefully.', name: 'thco_1' },
+                        { prompt: 'I thought about how much time I had left.', name: 'thco_2' },
+                        { prompt: 'I thought about how others have done on this task.', name: 'thco_3' },
+			{ prompt: 'I thought about the difficulty of the problems.', name: 'thco_4' },
+			{ prompt: 'I thought about my level of ability.', name: 'thco_5' },
+			{ prompt: 'I thought about the purpose of the experiment.', name: 'thco_6' },
+			{ prompt: 'I thought about how I would feel if I were told how I performed.', name: 'thco_7' },
+			{ prompt: 'I thought about how often I get confused.', name: 'thco_8' },
+			{ prompt: 'I thought about members of my family.', name: 'thco_9' },
+			{ prompt: 'I thought about something that made me feel guilty.', name: 'thco_10' },
+			{ prompt: 'I thought about personal worries.', name: 'thco_11' },
+			{ prompt: 'I thought about something that made me feel angry.', name: 'thco_12' },
+			{ prompt: 'I thought about something that happened earlier today.', name: 'thco_13' },
+			{ prompt: 'I thought about something that happened in the recent past (last few days, but not today).', name: 'thco_14' },
+			{ prompt: 'I thought about something that happened in the distant past', name: 'thco_15' },
+			{ prompt: 'I thought about something that might happen in the future.', name: 'thco_16' },
+
+
+                    ],
+                    options: ['Never', 'Once', 'A few times', 'Often', 'Very often'],
+                },
+            ]
+        ]
+    };
+
+
+var trial1 = {
+    type: jsPsychImageButtonResponse,
+    stimulus: 'happyemoji.jpg',
+    choices: ['Happy', 'Sad'],
+    prompt: "<p>Is this person happy or sad?</p>"
+};
+
+
+
+timeline = [intro, mood, motivation, thinking_style, thinking_content];
+
+
+
+
+
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+
+
+
+
+
+
+  </script>
+</html>
